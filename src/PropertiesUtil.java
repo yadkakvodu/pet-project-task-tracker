@@ -8,6 +8,10 @@ public final class PropertiesUtil {
 
     private PropertiesUtil() {}
 
+    static {
+        loadProperties();
+    }
+
     public static String get(String a) {
         return prop.getProperty(a);
     }
