@@ -8,7 +8,10 @@ public class User {
     private static final String USERNAME = "db.username";
 
     public static void main(String[] args) {
-        System.out.println(executeQuery("ki"));
+//        System.out.println(executeQuery("ki"));
+
+        System.out.println(containsUsernameOrEmail("yadkakvodu", "dalipkach.ru"));
+
     }
 
     public static Connection getConnection() throws SQLException {
@@ -38,6 +41,37 @@ public class User {
         } else {
             System.out.println("error table name");
         } return result;
+    }
+
+    private static boolean containsUsernameOrEmail(String username, String email) {
+        String SQL1 = "SELECT COUNT(*) FROM users WHERE username = ?";
+        String SQL2 = "SELECT COUNT(*) FROM users WHERE email = ?";
+        int cnt = 0;
+
+        try (Connection conn = getConnection(); PreparedStatement preparedStatement1 = conn.prepareStatement(SQL1);) {
+            PreparedStatement preparedStatement2 = conn.prepareStatement(SQL2);
+
+            preparedStatement1.setString(1, username);
+            preparedStatement2.setString(1, email);
+
+            ResultSet res1 = preparedStatement1.executeQuery();
+            ResultSet res2 = preparedStatement2.executeQuery();
+
+            if (res1.next()) {
+                if (res1.getInt(1) > 0) {
+                    cnt++;
+                }
+            }
+            if (res2.next()) {
+                if (res2.getInt(1) > 0) {
+                    cnt++;
+                }
+            }
+            return cnt > 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return cnt > 0;
     }
 
 
