@@ -9,8 +9,10 @@ public class User {
 
     public static void main(String[] args) {
 //        System.out.println(executeQuery("ki"));
+//        System.out.println(containsUsernameOrEmail("yadkakvodu", "dalipkach.ru"));
 
-        System.out.println(containsUsernameOrEmail("yadkakvodu", "dalipkach.ru"));
+//        userRegistration("Igor Zavolochkin", "IgorZ14", "IGOZAV@fashik.ru");
+        executeQuery("users");
 
     }
 
@@ -62,12 +64,14 @@ public class User {
                     cnt++;
                 }
             }
+
             if (res2.next()) {
                 if (res2.getInt(1) > 0) {
                     cnt++;
                 }
             }
             return cnt > 0;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -76,7 +80,42 @@ public class User {
 
 
     private static void userRegistration(String username, String password, String email) {
+        String SQL = "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
+        boolean bool = containsUsernameOrEmail(username, email);
+        if (!bool) {
+            try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(SQL)) {
+
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, email);
+                preparedStatement.setString(3, password);
+
+                preparedStatement.executeUpdate();
+
+                System.out.println("вставлен");
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void authorization(String email, String password) {
+        String SQL1 = "SELECT email FROM users WHERE email = ?";
+        String SQL2 = "SELECT password FROM users WHERE password = ?";
+        try (Connection conn = getConnection(); PreparedStatement preparedStatement1 = conn.prepareStatement(SQL1);
+             PreparedStatement preparedStatement2 = conn.prepareStatement(SQL1)) {
+
+            preparedStatement1.setString(1, email);
+            preparedStatement2.setString(1, password);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
+
+
+
+
 
 }
