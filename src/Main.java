@@ -13,11 +13,12 @@ public class Main {
 
         User user4 = new User("Semyon Voronin", "SVO2022@mail.ru", "ZaRussiaZaPutina2022");
 
-        UserService.userRegistration(user4);
+//        UserService.userRegistration(user4);
+//
+//        ProjectService.addUserAtProject(user3, user4, 1);
 
-        ProjectService.addUserAtProject(user3, user4, 1);
 
-
+        ProjectService.getUserProjects(user4);
 
     }
 
