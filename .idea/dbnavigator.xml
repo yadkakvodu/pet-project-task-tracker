@@ -158,9 +158,9 @@
     </connections>
     <browser-settings>
       <general>
-        <display-mode value="TABBED" />
+        <display-mode value="SELECTOR" />
         <navigation-history-size value="100" />
-        <show-object-details value="false" />
+        <show-object-details value="true" />
         <enable-sticky-paths value="true" />
         <enable-quick-filters value="false" />
       </general>
