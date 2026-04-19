@@ -1,3 +1,7 @@
+package service;
+
+import model.User;
+
 import java.sql.*;
 import java.util.*;
 
@@ -17,8 +21,8 @@ public class UserService {
 
     protected static List<Integer> executeQuery(String SQL) {
         List<Integer> result = new ArrayList<>();
-        List<String> tablesNames = Arrays.asList("Comments", "Project Members", "Projects",
-                "Status Transitions", "Task History", "Task Statuses", "Tasks", "users");
+        List<String> tablesNames = Arrays.asList("Comments", "model.Project Members", "Projects",
+                "Status Transitions", "model.Task History", "model.Task Statuses", "Tasks", "users");
         if (tablesNames.contains(SQL)) {
             try (Connection connection = getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + SQL)) {

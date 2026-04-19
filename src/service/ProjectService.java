@@ -1,5 +1,9 @@
+package service;
+
+import model.Project;
+import model.User;
+
 import java.sql.*;
-import java.util.*;
 
 public class ProjectService {
 
@@ -14,7 +18,7 @@ public class ProjectService {
                 PropertiesUtil.get(PASSWORD));
     }
 
-    protected static void createProject(User user, String name, String description) {
+    protected static void createProject(User user, Project project) {
 
         String SQL = "INSERT INTO projects(name, description, owner_id) VALUES (?, ?, ?);";
         String SQL2 = "INSERT INTO project_members(project_id, role, user_id) VALUES(?, ?, ?);";
@@ -25,8 +29,8 @@ public class ProjectService {
                  PreparedStatement preparedStatement = connection.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
                  PreparedStatement preparedStatement2 = connection.prepareStatement(SQL2)) {
 
-                preparedStatement.setString(1, name);
-                preparedStatement.setString(2, description);
+                preparedStatement.setString(1, project.getName());
+                preparedStatement.setString(2, project.getDescription());
                 preparedStatement.setInt(3, UserService.authorization(user));
 
                 preparedStatement.executeUpdate();
@@ -50,7 +54,6 @@ public class ProjectService {
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
-
         }
     }
 
@@ -97,7 +100,7 @@ public class ProjectService {
                         preparedStatement3.executeUpdate();
                         System.out.println("Пользователь добавлен");
                     } else {
-                        System.out.println("Пользователь есть в проекту!");
+                        System.out.println("Пользователь есть в проекте!");
                     }
                 } else {
                     System.out.println("Только админ может добавлять участника в проект!");
@@ -144,6 +147,22 @@ public class ProjectService {
     }
 
 
+    protected static int getProjectId(Project project) {
+        String SQL = "SELECT id FROM projects WHERE name = ? AND description = ?";
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+
+            preparedStatement.setString(1, project.getName());
+            preparedStatement.setString(2, project.getDescription());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return -1;
+    }
 
 
 }
