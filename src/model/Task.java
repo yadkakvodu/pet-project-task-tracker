@@ -18,12 +18,29 @@ public class Task {
         this.project_id = project_id;
     }
 
+    public Task(String title, String description, String priority) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+    }
+
     public Task(String title, String priority, int creator_id, int assignee_id, int project_id) {
         this.title = title;
         this.priority = priority;
         this.creator_id = creator_id;
         this.assignee_id = assignee_id;
         this.project_id = project_id;
+    }
+
+    public Task(String title, String priority, int project_id) {
+        this.title = title;
+        this.priority = priority;
+        this.project_id = project_id;
+    }
+
+    public Task(String title, String priority) {
+        this.title = title;
+        this.priority = priority;
     }
 
     public String getTitle() {

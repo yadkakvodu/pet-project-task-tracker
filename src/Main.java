@@ -1,4 +1,5 @@
 import model.Project;
+import model.Task;
 import model.User;
 import service.TaskService;
 
@@ -25,7 +26,11 @@ public class Main {
 
 //        service.ProjectService.getUserProjects(user4);
 
-        TaskService.createTask(user4, project1, "medium", "Create buyTicket method", "void-method of buy ticket");
+        Task task = new Task("userstory map", "карта пользовательских историй", "high");
+
+//        TaskService.createTask(user4, project1, task);
+
+        TaskService.updateTaskAssignee(project1, task, user4);
 
     }
 

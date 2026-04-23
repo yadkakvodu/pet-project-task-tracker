@@ -18,7 +18,7 @@ public class TaskService {
                 PropertiesUtil.get(PASSWORD));
     }
 
-    public static void createTask(User taskCreator, Project project, String priority, String title, String description) {
+    public static void createTask(User taskCreator, Project project, Task task) {
         String SQL = "SELECT user_id FROM project_members WHERE project_id = ? AND user_id = ?;";
         String SQL1 = "INSERT INTO tasks(assignee_id, creator_id, project_id, title, priority, description) VALUES (?, ?, ?, ?, ?, ?);";
 
@@ -38,15 +38,17 @@ public class TaskService {
             }
 
             if (user_id2 > 0) {
+
                 preparedStatement1.setInt(1, user_id);
                 preparedStatement1.setInt(2, user_id);
                 preparedStatement1.setInt(3, project_id);
-                preparedStatement1.setString(4, title);
-                preparedStatement1.setString(5, priority);
-                preparedStatement1.setString(6, description);
+                preparedStatement1.setString(4, task.getTitle());
+                preparedStatement1.setString(5, task.getPriority());
+                preparedStatement1.setString(6, task.getDescription());
 
                 preparedStatement1.executeUpdate();
                 System.out.println("Задача добавлена");
+
             } else {
                 System.out.println("Ошибка");
             }
@@ -56,7 +58,24 @@ public class TaskService {
         }
     }
 
+    private static int getTaskId(Task task) {
 
+        String sql = "SELECT id FROM tasks WHERE title = ? AND description = ? AND priority = ?";
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, task.getTitle());
+            preparedStatement.setString(2, task.getDescription());
+            preparedStatement.setString(3, task.getPriority());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } return -1;
+    }
 
 //    👉 меняем assignee
 //
@@ -68,9 +87,34 @@ public class TaskService {
 //4. обновить задачу
 //5. записать в history
 
-    protected static void updateTaskAssignee(Project project, Task task, User assignee) {
+    public static void updateTaskAssignee(Project project, Task task, User assignee) {
+
+        if (getTaskId(task) > 0) {
+
+            String SQL = "SELECT project_id FROM project_members WHERE user_id = ?";
+            String SQL2 = "UPDATE tasks SET assignee_id = ? WHERE id = ?;";
+            int id = UserService.authorization(assignee);
+            try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+                 PreparedStatement preparedStatement2 = connection.prepareStatement(SQL2)) {
+
+                preparedStatement.setInt(1, id);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+
+                    if (resultSet.getInt("project_id") == ProjectService.getProjectId(project)) {
+                        preparedStatement2.setInt(1, id);
+                        preparedStatement2.setInt(2, getTaskId(task));
+
+                        preparedStatement2.executeUpdate();
+                    }
+
+                }
 
 
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
     }
 
