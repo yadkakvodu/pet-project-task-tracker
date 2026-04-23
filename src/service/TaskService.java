@@ -77,16 +77,6 @@ public class TaskService {
         } return -1;
     }
 
-//    👉 меняем assignee
-//
-//    Код должен:
-//
-//            1. проверить: задача существует
-//2. проверить: пользователь в проекте
-//3. проверить: новый исполнитель в проекте
-//4. обновить задачу
-//5. записать в history
-
     public static void updateTaskAssignee(Project project, Task task, User assignee) {
         if (getTaskId(task) > 0) {
             String SQL = "SELECT project_id FROM project_members WHERE user_id = ?";
