@@ -88,35 +88,39 @@ public class TaskService {
 //5. записать в history
 
     public static void updateTaskAssignee(Project project, Task task, User assignee) {
-
         if (getTaskId(task) > 0) {
-
             String SQL = "SELECT project_id FROM project_members WHERE user_id = ?";
             String SQL2 = "UPDATE tasks SET assignee_id = ? WHERE id = ?;";
+            String SQL3 = "INSERT INTO task_history(task_id, field_name)" +
+                    "VALUES(?, ?)";
             int id = UserService.authorization(assignee);
+
             try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-                 PreparedStatement preparedStatement2 = connection.prepareStatement(SQL2)) {
+                 PreparedStatement preparedStatement2 = connection.prepareStatement(SQL2);
+                 PreparedStatement preparedStatement3 = connection.prepareStatement(SQL3)) {
 
                 preparedStatement.setInt(1, id);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
 
+                while (resultSet.next()) {
                     if (resultSet.getInt("project_id") == ProjectService.getProjectId(project)) {
                         preparedStatement2.setInt(1, id);
                         preparedStatement2.setInt(2, getTaskId(task));
 
                         preparedStatement2.executeUpdate();
                     }
-
-
                 }
 
+                preparedStatement3.setInt(1, getTaskId(task));
+                preparedStatement3.setString(2, "assignee");
+                preparedStatement3.executeUpdate();
 
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
-
     }
+
+
 
 }
